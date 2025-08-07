@@ -3,31 +3,32 @@ import numpy as np
 import joblib
 import os
 
-st.title("Ridge Regression Predictor")
+st.set_page_config(page_title="Ridge Regression Predictor")
+st.title("🔮 Ridge Regression Predictor")
+st.markdown("Enter values for **15 input features** to predict the target value.")
 
-MODEL_FILE = "ridge_pipeline.pkl"
+# Model file path
+MODEL_FILE = "ridge_model.pkl"
 
-# Load trained pipeline (RFE + Ridge)
+# Load the model or show error
 if os.path.exists(MODEL_FILE):
     model = joblib.load(MODEL_FILE)
 else:
-    st.error("Trained model not found.")
+    st.error(f"Model file '{MODEL_FILE}' not found. Please upload it to the app directory.")
     st.stop()
 
-# Collect input for all 15 features
-feature_inputs = []
+# Create input fields for 15 features
+st.markdown("### Input Features")
+features = []
+for i in range(1, 16):
+    value = st.number_input(f"Feature {i}", value=0.0)
+    features.append(value)
 
-for i in range(1, 16):  # assuming features are f1 to f15
-    value = st.number_input(f"Feature {i}", key=f"f{i}")
-    feature_inputs.append(value)
-
-# Make prediction
+# Prediction logic
 if st.button("Predict"):
     try:
-        features = np.array([feature_inputs])
-        prediction = model.predict(features)
-        st.success(f"Predicted value: {prediction[0]:.4f}")
+        input_array = np.array([features])  # shape: (1, 15)
+        prediction = model.predict(input_array)
+        st.success(f"🎯 Predicted Value: **{prediction[0]:.4f}**")
     except Exception as e:
-        st.error(f"An error occurred during prediction: {str(e)}")
-
-
+        st.error(f"❌ An error occurred during prediction: {str(e)}")
